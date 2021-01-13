@@ -1,82 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/pages/home.dart';
+import 'package:flutter_demo/pages/search.dart';
+import 'package:flutter_demo/pages/settings.dart';
+import 'fancy_tab_bar.dart';
+import 'tab_item.dart';
 
 void main() => runApp(MyApp());
 
-/// This is the main application widget.
 class MyApp extends StatelessWidget {
-  static const String _title = 'Flutter Code Sample';
-
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: _title,
-      home: MyStatefulWidget(),
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+      ),
+      home: MyHomePage(),
     );
   }
 }
 
-/// This is the stateful widget that the main application instantiates.
-class MyStatefulWidget extends StatefulWidget {
-  MyStatefulWidget({Key key}) : super(key: key);
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key}) : super(key: key);
 
   @override
-  _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
-/// This is the private State class that goes with MyStatefulWidget.
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-  ];
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+  int page_index = 0;
 
-  void _onItemTapped(int index) {
+  callback(newAbc) {
     setState(() {
-      _selectedIndex = index;
+      page_index = newAbc;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('BottomNavigationBar Sample'),
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'School',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
-    );
+        backgroundColor: Colors.grey.shade200,
+        appBar: AppBar(
+          backgroundColor: PURPLE,
+          title: Text("Team SuperStar"),
+        ),
+        bottomNavigationBar: FancyTabBar(page_index, callback),
+        body: page_index == 0
+            ? Home()
+            : page_index == 1
+                ? Search()
+                : Settings());
   }
 }
