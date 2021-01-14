@@ -22,8 +22,8 @@ class _FancyTabBarState extends State<FancyTabBar>
   Animation<double> _fadeFabInAnimation;
 
   double fabIconAlpha = 1;
-  IconData nextIcon = Icons.search;
-  IconData activeIcon = Icons.search;
+  IconData nextIcon = Icons.table_chart;
+  IconData activeIcon = Icons.table_chart;
 
   int currentSelected = 1;
 
@@ -87,11 +87,11 @@ class _FancyTabBarState extends State<FancyTabBar>
             children: <Widget>[
               TabItem(
                   selected: currentSelected == 0,
-                  iconData: Icons.table_chart,
-                  title: "HOME",
+                  iconData: Icons.search,
+                  title: "SEARCH",
                   callbackFunction: () {
                     setState(() {
-                      nextIcon = Icons.table_chart;
+                      nextIcon = Icons.search;
                       currentSelected = 0;
                     });
                     widget.callback(currentSelected);
@@ -99,11 +99,11 @@ class _FancyTabBarState extends State<FancyTabBar>
                   }),
               TabItem(
                   selected: currentSelected == 1,
-                  iconData: Icons.search,
-                  title: "SEARCH",
+                  iconData: Icons.table_chart,
+                  title: "HOME",
                   callbackFunction: () {
                     setState(() {
-                      nextIcon = Icons.search;
+                      nextIcon = Icons.table_chart;
                       currentSelected = 1;
                     });
                     widget.callback(currentSelected);

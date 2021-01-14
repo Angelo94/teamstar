@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/pages/home.dart';
-import 'package:flutter_demo/pages/search.dart';
-import 'package:flutter_demo/pages/settings.dart';
+import 'package:team_superstar/pages/home.dart';
+import 'package:team_superstar/pages/search.dart';
+import 'package:team_superstar/pages/settings.dart';
 import 'fancy_tab_bar.dart';
 import 'tab_item.dart';
 
@@ -29,7 +29,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
-  int page_index = 0;
+  int page_index = 1;
 
   callback(newAbc) {
     setState(() {
@@ -47,9 +47,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         ),
         bottomNavigationBar: FancyTabBar(page_index, callback),
         body: page_index == 0
-            ? Home()
+            ? Search()
             : page_index == 1
-                ? Search()
+                ? Home()
                 : Settings());
   }
 }
