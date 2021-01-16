@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mvc_pattern/mvc_pattern.dart';
+import 'package:social_media_buttons/social_media_button.dart';
+import 'package:social_media_buttons/social_media_icons.dart';
 import 'package:team_superstar/controllers/AuthController.dart';
 
 
@@ -8,7 +11,7 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends StateMVC<LoginPage> {
 
   AuthController _con;
   TextEditingController usernameController = new TextEditingController();
@@ -16,14 +19,16 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   bool _obscureText = true;
 
-  // _LoginPageState() : super(AuthController()) {
-  //   _con = controller;
-  // }
+  _LoginPageState() : super(AuthController()) {
+    _con = controller;
+  }
 
 
   @override
   void initState() {
     super.initState();
+    print('IS LOADING');
+    print(_con.isLoading);
   }
 
   @override
@@ -36,10 +41,10 @@ class _LoginPageState extends State<LoginPage> {
       decoration: BoxDecoration(
         //crea una sfumatura lineare verticale (topCenter a bottom Center)
         gradient: LinearGradient(
-          // colors: [
-          //   Theme.of(context).accentColor,
-          //   Colors.orange[300],
-          // ],
+          colors: [
+            Theme.of(context).accentColor,
+            Colors.orange[300],
+          ],
           begin: Alignment.topCenter,
           end: Alignment.bottomRight
         ),
@@ -49,7 +54,8 @@ class _LoginPageState extends State<LoginPage> {
             headerSection(),
             textSection(),
             buttonSection(),
-            buttonRegister()
+            buttonRegister(),
+            socialSection()
           ],
         ),
     )
@@ -101,7 +107,34 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-
+  Container socialSection() {
+    return Container(
+      child: Padding(
+        padding: EdgeInsets.only(top:60),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SocialMediaButton.google(
+              url: "https://twitter.com/CipliOnat",
+              size: 35,
+              color: Colors.red,
+              onTap: () {
+                print('onTap ');
+              },
+            ),
+            SocialMediaButton.facebook(
+              url: "https://twitter.com/CipliOnat",
+              size: 35,
+              color: Colors.blue,
+              onTap: () {
+                print('onTap ');
+              },
+            ),
+          ]
+        ),
+      )
+      );
+  }
   Container textSection(){
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.0),

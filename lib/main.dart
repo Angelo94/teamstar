@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:team_superstar/pages/home.dart';
 import 'package:team_superstar/pages/search.dart';
 import 'package:team_superstar/pages/settings.dart';
+import 'package:team_superstar/routes.dart';
 import 'fancy_tab_bar.dart';
 import 'tab_item.dart';
 
@@ -16,20 +18,23 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: MyHomePage(),
+      home: MainPage(),
+      initialRoute: '/MainPage',
+      onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+class MainPage extends StatefulWidget {
+  MainPage({Key key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MainPageState createState() => _MainPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   int page_index = 1;
+  SharedPreferences sharedPreferences;
 
   callback(newAbc) {
     setState(() {
@@ -44,6 +49,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         appBar: AppBar(
           backgroundColor: PURPLE,
           title: Text("Team SuperStar"),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.exit_to_app_rounded,
+                color: Colors.white,
+              ),
+              onPressed: () async {
+                // do something
+                sharedPreferences = await SharedPreferences.getInstance();
+                sharedPreferences.clear();
+                Navigator.of(context).pushReplacementNamed('/LogIn');
+              },
+            )
+          ],
         ),
         bottomNavigationBar: FancyTabBar(page_index, callback),
         body: page_index == 0
