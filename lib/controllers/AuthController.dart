@@ -36,7 +36,7 @@ class AuthController extends ControllerMVC {
           isLoading = false;
           sharedPreferences.setString("user_id", jsonData2['id'].toString());
           storage_user.setItem("username", username);
-          Navigator.of(context).pushReplacementNamed('/MainPage');
+          Navigator.of(context).pushReplacementNamed('/ChooseTeamPage');
         });
       }
     } else {
@@ -85,9 +85,6 @@ class AuthController extends ControllerMVC {
       jsonData = json.decode(response.body);
       setState(() {
         isLoading = false;
-        print(jsonData['token']);
-        sharedPreferences.setString("token", jsonData['token']);
-        storage_user.setItem("username", username);
       });
       showDialog(
         context: context,
@@ -99,7 +96,7 @@ class AuthController extends ControllerMVC {
               ),
             ),
             content: new Text(
-              "Effettua il login per accedere alle funzionalità di Gryfon!",
+              "Effettua il login!",
               style: TextStyle(letterSpacing: 4, fontSize: 12),
             ),
             actions: <Widget>[
@@ -108,11 +105,6 @@ class AuthController extends ControllerMVC {
                     Navigator.of(context).pushReplacementNamed('/LogIn');
                   },
                   child: new Text("LogIn")),
-              new FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacementNamed('/HomePage');
-                  },
-                  child: new Text("HomePage")),
             ]),
       );
     } else {

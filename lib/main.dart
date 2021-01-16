@@ -39,12 +39,63 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   int page_index = 1;
   SharedPreferences sharedPreferences;
+  List<String> _list = [];
+  
 
   callback(newAbc) {
     setState(() {
       page_index = newAbc;
     });
   }
+  void init() {
+    _list = List();
+    _list.add("Team Google");
+    _list.add("Team IOS");
+    _list.add("Team Andorid");
+    _list.add("Team Dart");
+    _list.add("Team Flutter");
+    _list.add("Team Python");
+    _list.add("Team React");
+    _list.add("Team Xamarin");
+    _list.add("Team Kotlin");
+    _list.add("Team Java");
+    _list.add("Team RxAndroid");
+  }
+  List<ChildItem> _buildList() {
+    init();
+    return _list.map((contact) => new ChildItem(contact)).toList();
+  }
+  _showMaterialDialog() {
+    showDialog(
+        context: context,
+        builder: (_) => new Dialog(
+  backgroundColor: Colors.transparent,
+  insetPadding: EdgeInsets.all(10),
+  child: Stack(
+    overflow: Overflow.visible,
+    alignment: Alignment.center,
+    children: <Widget>[
+      Container(
+        width: double.infinity,
+        height: 600,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          color: Colors.white
+        ),
+        padding: EdgeInsets.fromLTRB(20, 50, 20, 20),
+        child: new ListView(
+        padding: new EdgeInsets.symmetric(vertical: 8.0),
+        children: _buildList(),
+      ),
+      ),
+      Positioned(
+        top: -100,
+        child: Image.network("https://i.imgur.com/BnqYPv5.png", width: 150, height: 150)
+      )
+    ],
+  )));
+}
+  
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +106,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           title: Text("Team SuperStar"),
           actions: <Widget>[
             IconButton(
+              iconSize: 30,
+              icon: Icon(
+                Icons.people_outline_outlined,
+                color: Colors.white,
+              ),
+              onPressed: () async {
+               // Navigator.of(context).pushReplacementNamed('/ChooseTeamPage');
+                _showMaterialDialog();
+              },
+            ),
+            IconButton(
+              iconSize: 30,
               icon: Icon(
                 Icons.exit_to_app_rounded,
                 color: Colors.white,

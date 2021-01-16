@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:team_superstar/main.dart';
+import 'package:team_superstar/pages/choose_team.dart';
 import 'package:team_superstar/pages/home.dart';
 import 'package:team_superstar/widgets/login_widget.dart';
 import 'package:team_superstar/widgets/register_widget.dart';
@@ -13,6 +14,8 @@ class RouteGenerator {
     switch (settings.name) {
       case '/MainPage':
         return MaterialPageRoute(builder: (_) => MainPage());
+      case '/ChooseTeamPage':
+        return MaterialPageRoute(builder: (_) => ChooseTeam());
       case '/HomePage':
         return MaterialPageRoute(builder: (_) => Home());
       case '/HomePageLogged':

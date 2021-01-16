@@ -7,6 +7,6 @@ String onesignal_key = 'XXXXXXXX-XXXXXXXXXXXX-XXXXXXXXX';
 
 // URLS
 String login_api = base_url + 'auth/token/';
-String register_api = base_url + 'auth/user/';
+String register_api = base_url + 'auth/userregistration/';
 String user_api = base_url + 'auth/user/';
 String team_api = base_url + 'team/team/';
