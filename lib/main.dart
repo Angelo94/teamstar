@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:team_superstar/pages/home.dart';
 import 'package:team_superstar/pages/search.dart';
@@ -7,7 +8,10 @@ import 'package:team_superstar/routes.dart';
 import 'fancy_tab_bar.dart';
 import 'tab_item.dart';
 
-void main() => runApp(MyApp());
+Future main() async {
+  await DotEnv().load('.env');
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
