@@ -88,16 +88,22 @@ class _HomeState extends State<Home> {
                                               fontSize: 20.0,
                                               fontWeight: FontWeight.bold)),
                                     ]),
+                                SizedBox(height: 2),
                                 Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Icon(Icons.star_border),
-                                      Icon(Icons.star_border),
-                                      Icon(Icons.star_border),
-                                      Icon(Icons.star_border),
-                                      Icon(Icons.star_border)
+                                      Icon(Icons.star_border,
+                                          color: Colors.amber, size: 30.0),
+                                      Icon(Icons.star_border,
+                                          color: Colors.amber, size: 30.0),
+                                      Icon(Icons.star_border,
+                                          color: Colors.amber, size: 30.0),
+                                      Icon(Icons.star_border,
+                                          color: Colors.amber, size: 30.0),
+                                      Icon(Icons.star_border,
+                                          color: Colors.amber, size: 30.0),
                                     ]),
-                                Row()
+                                SizedBox(height: 2),
                               ],
                             ),
                           ),
