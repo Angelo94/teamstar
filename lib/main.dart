@@ -5,11 +5,14 @@ import 'package:team_superstar/pages/home.dart';
 import 'package:team_superstar/pages/search.dart';
 import 'package:team_superstar/pages/settings.dart';
 import 'package:team_superstar/routes.dart';
+import 'package:team_superstar/services/onesignal_handler.dart';
 import 'fancy_tab_bar.dart';
 import 'tab_item.dart';
 
 Future main() async {
   await DotEnv().load('.env');
+  //Remove this method to stop OneSignal Debugging
+  onesignalInit();
   runApp(MyApp());
 }
 
@@ -18,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Team Superstar',
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
