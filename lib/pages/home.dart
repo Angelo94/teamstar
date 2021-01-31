@@ -22,6 +22,10 @@ class _HomeState extends StateMVC<Home> {
   bool addButtonSelected = false;
   bool removeButtonSelected = false;
   bool isLogged = false;
+  String targetName = "";
+  String teamName = "";
+  String targetMax = "";
+
   final dataKey = new GlobalKey();
   _HomeState() : super(TeamController()) {
     _con = controller;
@@ -30,16 +34,15 @@ class _HomeState extends StateMVC<Home> {
   void getTeamInfo() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String teamId = sharedPreferences.getString("team_chose");
-    print("team chose");
-    print(teamId);
-    print(_con);
-    print(_con.isLoading);
+    String team_name = sharedPreferences.getString("team_name");
+    String target_name = sharedPreferences.getString("target_name");
+    String target_max = sharedPreferences.getString("target_max");
     _con.getTeamMembers(teamId);
-    print(_con.teamMembers);
-    print(_con.teamMembers);
-    print(_con.teamMembers);
-    print(_con.teamMembers);
-    print(_con.teamMembers);
+    setState(()=>{
+      teamName = team_name,
+      targetName = target_name,
+      targetMax = target_max,
+    });
   }
 
   String getUsername() {
@@ -247,6 +250,27 @@ class _HomeState extends StateMVC<Home> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(onPressed: (){
+        AwesomeDialog(
+            context: context,
+            dialogType: DialogType.QUESTION,
+            animType: AnimType.SCALE,
+            btnOkOnPress: () {},
+            body: Center(
+              child: Column(children: [
+                Row(children: [
+                  Text("Team name: ${teamName}", style: TextStyle(fontSize: 20))
+                ],),
+                Row(children: [
+                  Text("Target name: ${targetName}", style: TextStyle(fontSize: 20))
+                ],),
+                Row(children: [
+                  Text("Target max: ${targetMax}", style: TextStyle(fontSize: 20))
+                ],)
+              ],)
+            )
+            )..show();
+      },  child: Icon(Icons.info_sharp, size: 50))
     );
   }
 }

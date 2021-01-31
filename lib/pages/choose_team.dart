@@ -94,6 +94,8 @@ class ChildItem extends StatelessWidget {
                 SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                 sharedPreferences.setString("team_chose", this.id.toString());
                 sharedPreferences.setString("team_name", this.name);
+                sharedPreferences.setString("target_name", this.target_name);
+                sharedPreferences.setString("target_max", this.target_max.toString());
                 Navigator.of(context).pushReplacementNamed('/MainPage');
             },
           ),
