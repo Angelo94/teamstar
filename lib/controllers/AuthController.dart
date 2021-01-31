@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthController extends ControllerMVC {
   bool isLoading = false;
   LocalStorage storage_user = new LocalStorage("user");
-
+  List teamMembers = [];
   logIn(String username, password) async {
     Map data = {'username': username, 'password': password};
 
@@ -151,4 +151,6 @@ class AuthController extends ControllerMVC {
 //       });
 // }
   }
+
+
 }

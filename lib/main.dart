@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Crazy Star',
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
@@ -38,6 +38,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   int page_index = 1;
+  String team_name = "Crazy Star";
   SharedPreferences sharedPreferences;
   List<String> _list = [];
   
@@ -47,63 +48,28 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       page_index = newAbc;
     });
   }
-  void init() {
-    _list = List();
-    _list.add("Team Google");
-    _list.add("Team IOS");
-    _list.add("Team Andorid");
-    _list.add("Team Dart");
-    _list.add("Team Flutter");
-    _list.add("Team Python");
-    _list.add("Team React");
-    _list.add("Team Xamarin");
-    _list.add("Team Kotlin");
-    _list.add("Team Java");
-    _list.add("Team RxAndroid");
+  getTeamInfo() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String team_id = sharedPreferences.getString("team_chose");
+    team_name = sharedPreferences.getString("team_name");
+    print("team chose");
+    print(team_id);
   }
-  List<ChildItem> _buildList() {
-    init();
-    return _list.map((contact) => new ChildItem(contact)).toList();
-  }
-  _showMaterialDialog() {
-    showDialog(
-        context: context,
-        builder: (_) => new Dialog(
-  backgroundColor: Colors.transparent,
-  insetPadding: EdgeInsets.all(10),
-  child: Stack(
-    overflow: Overflow.visible,
-    alignment: Alignment.center,
-    children: <Widget>[
-      Container(
-        width: double.infinity,
-        height: 600,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          color: Colors.white
-        ),
-        padding: EdgeInsets.fromLTRB(20, 50, 20, 20),
-        child: new ListView(
-        padding: new EdgeInsets.symmetric(vertical: 8.0),
-        children: _buildList(),
-      ),
-      ),
-      Positioned(
-        top: -100,
-        child: Image.network("https://i.imgur.com/BnqYPv5.png", width: 150, height: 150)
-      )
-    ],
-  )));
-}
-  
 
   @override
+  void initState() {
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
+    getTeamInfo();
+    
+
     return Scaffold(
         backgroundColor: Colors.grey.shade200,
         appBar: AppBar(
           backgroundColor: PURPLE,
-          title: Text("Team SuperStar"),
+          title: Text(team_name),
           actions: <Widget>[
             IconButton(
               iconSize: 30,
@@ -112,8 +78,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 color: Colors.white,
               ),
               onPressed: () async {
-               // Navigator.of(context).pushReplacementNamed('/ChooseTeamPage');
-                _showMaterialDialog();
+               Navigator.of(context).pushReplacementNamed('/ChooseTeamPage');
               },
             ),
             IconButton(

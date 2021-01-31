@@ -17,7 +17,7 @@ class Search extends StatefulWidget {
 
 class _SearchListState extends State<Search> {
   Widget appBarTitle = new Text(
-    "Search Teams",
+    "Invite People",
     style: new TextStyle(color: Colors.white),
   );
   Icon actionIcon = new Icon(
