@@ -37,12 +37,14 @@ class _HomeState extends StateMVC<Home> {
     String team_name = sharedPreferences.getString("team_name");
     String target_name = sharedPreferences.getString("target_name");
     String target_max = sharedPreferences.getString("target_max");
-    _con.getTeamMembers(teamId);
-    setState(()=>{
-      teamName = team_name,
-      targetName = target_name,
-      targetMax = target_max,
-    });
+    if (teamId != null) {
+      _con.getTeamMembers(teamId);
+      setState(()=>{
+        teamName = team_name,
+        targetName = target_name,
+        targetMax = target_max,
+      });
+    }
   }
 
   String getUsername() {
