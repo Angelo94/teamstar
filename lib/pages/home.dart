@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:team_superstar/controllers/AuthController.dart';
 import 'package:team_superstar/controllers/TeamController.dart';
 import 'package:animated_icon_button/animated_icon_button.dart';
+import 'package:team_superstar/widgets/skeleton_loader_widget.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -43,6 +44,9 @@ class _HomeState extends StateMVC<Home> {
         teamName = team_name,
         targetName = target_name,
         targetMax = target_max,
+      });
+       setState(() {
+        _con.isLoading = true;
       });
     }
   }
@@ -86,7 +90,7 @@ class _HomeState extends StateMVC<Home> {
 
     return new Scaffold(
       primary: true,
-      body: new SingleChildScrollView(
+      body: _con.isLoading ? Center(child: buildLoader()) : new SingleChildScrollView(
         child: new Column(
           children: <Widget>[
             for (var i in _con.teamMembers)

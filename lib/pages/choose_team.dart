@@ -4,11 +4,14 @@ import 'package:localstorage/localstorage.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:team_superstar/controllers/TeamController.dart';
+import 'package:team_superstar/models/planets.dart';
+import 'package:team_superstar/widgets/planet_row.dart';
 
 class ChooseTeam extends StatefulWidget {
   @override
   _ChooseTeamState createState() => new _ChooseTeamState();
 }
+
 class _ChooseTeamState extends StateMVC<ChooseTeam> {
   TeamController _con;
 
@@ -24,24 +27,24 @@ class _ChooseTeamState extends StateMVC<ChooseTeam> {
     _con = controller;
   }
 
-  void initState(){
+  void initState() {
     super.initState();
     print('get teams');
     _con.getTeams();
     print(_con.teams);
   }
-  List<ChildItem> _buildTeamList() {
-    print(_con.teams.length);
-    return _con.teams.map((team) => new ChildItem(team['id'],team['name'],team['target_name'],team['target_max'])).toList();
-  }
+
+  // List<ChildItem> _buildTeamList() {
+  //   print(_con.teams.length);
+  //   return _con.teams.map((team) => new ChildItem(team['id'],team['name'],team['target_name'],team['target_max'])).toList();
+  // }
   @override
   Widget build(BuildContext context) {
     FullScreenDialog _myDialog = new FullScreenDialog();
-
     return Scaffold(
-      appBar: AppBar(
+        appBar: AppBar(
           backgroundColor: Colors.purple,
-          title: Text("Team SuperStar"),
+          title: Text("Crazy Star"),
           actions: <Widget>[
             IconButton(
               iconSize: 30,
@@ -58,50 +61,104 @@ class _ChooseTeamState extends StateMVC<ChooseTeam> {
             )
           ],
         ),
-      body: _con.teams.length != 0 ?  new ListView(
-                          children: _buildTeamList(),
-                        ) : ("Your teams will be prompted here!"),
-      floatingActionButton: FloatingActionButton(onPressed: (){
-        Navigator.push(context, new MaterialPageRoute(
+        body: new Container(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            new CustomScrollView(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: false,
+            slivers: <Widget>[
+              new SliverPadding(
+                padding: const EdgeInsets.symmetric(vertical: 24.0),
+                sliver: new SliverList(
+                  delegate: new SliverChildBuilderDelegate(
+                    (context, index) => new InkWell(
+                      child: new PlanetRow(_con.teams[index]),
+                      onTap: () async {
+                        print('tapping');
+                        SharedPreferences sharedPreferences =
+                            await SharedPreferences.getInstance();
+                        sharedPreferences.setString(
+                            "team_chose", _con.teams[index].id.toString());
+                        sharedPreferences.setString(
+                            "team_name", _con.teams[index].name);
+                        sharedPreferences.setString(
+                            "target_name", _con.teams[index].target_name);
+                        sharedPreferences.setString("target_max",
+                            _con.teams[index].target_max.toString());
+                        Navigator.of(context).pushReplacementNamed('/MainPage');
+                      },
+                    ),
+                    childCount: _con.teams.length,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          ],
+        ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
                   builder: (BuildContext context) => _myDialog,
                   fullscreenDialog: true,
                 ));
-      },  child: Icon(Icons.person_add_alt), )
-    );
-  }
-}
-
-class ChildItem extends StatelessWidget {
-  final int id;
-  final String name;
-  final String target_name;
-  final int target_max;
-
-  ChildItem(this.id, this.name, this.target_name, this.target_max);
-  @override
-  Widget build(BuildContext context) {
-    return new Card(
-      child: Column(
-        children: [
-          CircleAvatar(
-            backgroundImage: NetworkImage('https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-male-avatar-maker.jpg'),
-          ),
-          ListTile(
-            title: Text(this.name + ' - ' + this.target_name),
-            subtitle: Text('Creato da Pippo'),
-            trailing: Icon(Icons.more_vert),
-            onTap: () async {
-                SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-                sharedPreferences.setString("team_chose", this.id.toString());
-                sharedPreferences.setString("team_name", this.name);
-                sharedPreferences.setString("target_name", this.target_name);
-                sharedPreferences.setString("target_max", this.target_max.toString());
-                Navigator.of(context).pushReplacementNamed('/MainPage');
-            },
-          ),
-        ]
-      )
-    );
+          },
+          child: Icon(Icons.person_add_alt),
+        ));
+    // return Scaffold(
+    //   appBar: AppBar(
+    //       backgroundColor: Colors.purple,
+    //       title: Text("Crazy Star"),
+    //       actions: <Widget>[
+    //         IconButton(
+    //           iconSize: 30,
+    //           icon: Icon(
+    //             Icons.exit_to_app_rounded,
+    //             color: Colors.white,
+    //           ),
+    //           onPressed: () async {
+    //             // do something
+    //             sharedPreferences = await SharedPreferences.getInstance();
+    //             sharedPreferences.clear();
+    //             Navigator.of(context).pushReplacementNamed('/LogIn');
+    //           },
+    //         )
+    //       ],
+    //     ),
+    //   body: new Expanded(
+    //   child: new Container(
+    //     color: new Color(0xFF736AB7),
+    //     child: new CustomScrollView(
+    //         scrollDirection: Axis.vertical,
+    //         shrinkWrap: false,
+    //         slivers: <Widget>[
+    //           new SliverPadding(
+    //             padding: const EdgeInsets.symmetric(vertical: 24.0),
+    //             sliver: new SliverList(
+    //               delegate: new SliverChildBuilderDelegate(
+    //                   (context, index) => new PlanetRow(planets[index]),
+    //                 childCount: planets.length,
+    //               ),
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   ),
+    //   // _con.teams.length != 0 ?  new ListView(
+    //   //                     children: _buildTeamList(),
+    //   //                   ) : ("Your teams will be prompted here!"),
+    //   floatingActionButton: FloatingActionButton(onPressed: (){
+    //     Navigator.push(context, new MaterialPageRoute(
+    //               builder: (BuildContext context) => _myDialog,
+    //               fullscreenDialog: true,
+    //             ));
+    //   },  child: Icon(Icons.person_add_alt), )
+    // );
   }
 }
 
@@ -126,23 +183,35 @@ class FullScreenDialogState extends State<FullScreenDialog> {
         appBar: new AppBar(
           title: new Text("Create a new"),
         ),
-        body: new Padding(child: new ListView(
-          children: <Widget>[
-            new TextField(controller: _skillOneController,),
-            new TextField(controller: _skillTwoController,),
-            new TextField(controller: _skillThreeController,),
-            new Row(
-              children: <Widget>[
-                new Expanded(child: new RaisedButton(onPressed: () {
-                  widget._skillThree = _skillThreeController.text;
-                  widget._skillTwo = _skillTwoController.text;
-                  widget._skillOne = _skillOneController.text;
-                  Navigator.pop(context);
-                }, child: new Text("Save"),))
-              ],
-            )
-          ],
-        ), padding: const EdgeInsets.symmetric(horizontal: 20.0),)
-    );
+        body: new Padding(
+          child: new ListView(
+            children: <Widget>[
+              new TextField(
+                controller: _skillOneController,
+              ),
+              new TextField(
+                controller: _skillTwoController,
+              ),
+              new TextField(
+                controller: _skillThreeController,
+              ),
+              new Row(
+                children: <Widget>[
+                  new Expanded(
+                      child: new RaisedButton(
+                    onPressed: () {
+                      widget._skillThree = _skillThreeController.text;
+                      widget._skillTwo = _skillTwoController.text;
+                      widget._skillOne = _skillOneController.text;
+                      Navigator.pop(context);
+                    },
+                    child: new Text("Save"),
+                  ))
+                ],
+              )
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        ));
   }
 }

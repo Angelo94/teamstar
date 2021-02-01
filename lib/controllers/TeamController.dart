@@ -6,13 +6,14 @@ import 'package:mvc_pattern/mvc_pattern.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:team_superstar/global_variables.dart';
+import 'package:team_superstar/models/Team.dart';
 import 'package:team_superstar/utils.dart';
 
 class TeamController extends ControllerMVC {
   bool isLoading = false;
   List teamMembers = [];
   LocalStorage storage_team = new LocalStorage("team");
-  List teams = [];
+  List<Team> teams = [];
 
   getTeams() async {
     var jsonData = null;
@@ -25,8 +26,12 @@ class TeamController extends ControllerMVC {
     if (response.statusCode == 200) {
         jsonData = json.decode(response.body);
         print(jsonData);
+        List<Team> teams_list = [];
+        for (var team in jsonData) {
+          teams_list.add(Team.fromJSON(team));
+        }
         setState(() {
-          teams = jsonData;
+          teams = teams_list;
          });
        
     }
@@ -37,6 +42,9 @@ class TeamController extends ControllerMVC {
 
   getTeamMembers(teamId) async {
     print(user_api + '?team=' + teamId);
+    setState(() {
+      isLoading = true;
+    });
     var response = await authenticatedGet(team_api + teamId);
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -44,6 +52,9 @@ class TeamController extends ControllerMVC {
       print(jsonData);
       setState(() {
         teamMembers = jsonData['members'];
+      });
+      setState(() {
+        isLoading = false;
       });
     }
   }

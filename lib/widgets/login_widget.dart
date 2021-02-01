@@ -18,7 +18,8 @@ class _LoginPageState extends StateMVC<LoginPage> {
   TextEditingController passwordController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _obscureText = true;
-
+  bool usernameTextboxSelected = true;
+  bool pwdTextboxSelected = false;
   _LoginPageState() : super(AuthController()) {
     _con = controller;
   }
@@ -43,7 +44,7 @@ class _LoginPageState extends StateMVC<LoginPage> {
         gradient: LinearGradient(
           colors: [
             Theme.of(context).accentColor,
-            Colors.orange[300],
+            Colors.deepPurple[300],
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomRight
@@ -102,7 +103,7 @@ class _LoginPageState extends StateMVC<LoginPage> {
       onPressed: () {  
         Navigator.of(context).pushReplacementNamed("/SignIn");
       },
-      child: Text("registrati", style: TextStyle(color: Colors.black),),
+      child: Text("Register", style: TextStyle(color: Colors.black),),
       )
     );
   }
@@ -154,12 +155,21 @@ class _LoginPageState extends StateMVC<LoginPage> {
   TextFormField txtusername(String title, IconData icon){
     return TextFormField(
       controller: usernameController,
+      autofocus: true,
       validator: (value) => value.length<3 ? "Attenzione, inserire lo username" : null,
       style: TextStyle(color: Colors.white),
+      onTap: () {
+        setState(() {
+          usernameTextboxSelected = true;
+        });
+      },
+      onChanged: (text) {
+        print("First text field: $text");
+      },
       decoration: InputDecoration(
         hintText: title,
         hintStyle: TextStyle(color: Colors.white),
-        icon: Icon(icon, color: Colors.black,),     
+        icon: Icon(icon, color: usernameTextboxSelected ? Colors.white : Colors.black,),     
       ),
       
     );
@@ -172,6 +182,11 @@ class _LoginPageState extends StateMVC<LoginPage> {
       validator: (value) => value.length<3 ? "Attenzione, inserire la password" : null,
       style: TextStyle(color: Colors.white),
       obscureText: _obscureText,
+      onTap: () {
+        setState(() {
+          pwdTextboxSelected = true;
+        });
+      },
       decoration: InputDecoration(
         suffixIcon: IconButton(
           icon: Icon(
@@ -187,7 +202,7 @@ class _LoginPageState extends StateMVC<LoginPage> {
           ),
         hintText: title,
         hintStyle: TextStyle(color: Colors.white),
-        icon: Icon(icon, color: Colors.black,),
+        icon: Icon(icon, color: pwdTextboxSelected ? Colors.white : Colors.black,),
       ),
     );
   }
