@@ -66,7 +66,7 @@ class _ChooseTeamState extends StateMVC<ChooseTeam> {
           children: [
             new CustomScrollView(
             scrollDirection: Axis.vertical,
-            shrinkWrap: false,
+            shrinkWrap: true,
             slivers: <Widget>[
               new SliverPadding(
                 padding: const EdgeInsets.symmetric(vertical: 24.0),
@@ -171,30 +171,51 @@ class FullScreenDialog extends StatefulWidget {
   FullScreenDialogState createState() => new FullScreenDialogState();
 }
 
-class FullScreenDialogState extends State<FullScreenDialog> {
+class FullScreenDialogState extends StateMVC<FullScreenDialog> {
   TextEditingController _skillOneController = new TextEditingController();
   TextEditingController _skillTwoController = new TextEditingController();
-
   TextEditingController _skillThreeController = new TextEditingController();
+  TeamController _con;
 
+  FullScreenDialogState() : super(TeamController()) {
+    _con = controller;
+  }
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text("Create a new"),
+          title: new Text("Create a new Team"),
         ),
         body: new Padding(
           child: new ListView(
             children: <Widget>[
+                SizedBox(height: 25,),
+              Text("Team name"),
               new TextField(
+                decoration: InputDecoration(hintText: "ex. SpiceGirls",),
                 controller: _skillOneController,
-              ),
-              new TextField(
+                scrollPadding: EdgeInsets.all(20.0),
+                keyboardType: TextInputType.multiline,
+                autofocus: true,),
+                SizedBox(height: 50,),
+              Text("Team target name"),
+               new TextField(
+                decoration: InputDecoration(hintText: "ex. Coffee",),
                 controller: _skillTwoController,
-              ),
-              new TextField(
+                scrollPadding: EdgeInsets.all(20.0),
+                keyboardType: TextInputType.multiline,
+                autofocus: true,),
+                SizedBox(height: 50,),
+
+              Text("Team target max limit"),
+               new TextField(
+                decoration: InputDecoration(hintText: "ex. 5",),
                 controller: _skillThreeController,
-              ),
+                scrollPadding: EdgeInsets.all(20.0),
+                keyboardType: TextInputType.multiline,
+                autofocus: true,),
+                SizedBox(height: 50,),
+
               new Row(
                 children: <Widget>[
                   new Expanded(
@@ -203,7 +224,10 @@ class FullScreenDialogState extends State<FullScreenDialog> {
                       widget._skillThree = _skillThreeController.text;
                       widget._skillTwo = _skillTwoController.text;
                       widget._skillOne = _skillOneController.text;
-                      Navigator.pop(context);
+                      print(widget._skillThree);
+                      print(widget._skillTwo);
+                      print(widget._skillOne);
+                      _con.createTeam();
                     },
                     child: new Text("Save"),
                   ))

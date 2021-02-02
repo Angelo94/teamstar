@@ -56,7 +56,30 @@ class _LoginPageState extends StateMVC<LoginPage> {
             textSection(),
             buttonSection(),
             buttonRegister(),
-            socialSection()
+            socialSection(),
+            SizedBox(height: 50),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
+              child: Column(children: [
+                  Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(Icons.star, color: Colors.yellow, size: 70)
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.star, color: Colors.yellow, size: 50)
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Icon(Icons.star, color: Colors.yellow, size: 70)
+              ],
+            ),
+              ],))
           ],
         ),
     )

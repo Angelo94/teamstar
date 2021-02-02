@@ -39,29 +39,12 @@ class _SettingsState extends State<Settings> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => LanguagesScreen()));
                 },
-              ),
-              SettingsTile(
-                title: 'Environment',
-                subtitle: 'Production',
-                leading: Icon(Icons.cloud_queue),
-                onTap: () => print('e'),
-              ),
+              )
             ],
           ),
           SettingsSection(
             title: 'Security',
             tiles: [
-              SettingsTile.switchTile(
-                title: 'Lock app in background',
-                leading: Icon(Icons.phonelink_lock),
-                switchValue: lockInBackground,
-                onToggle: (bool value) {
-                  setState(() {
-                    lockInBackground = value;
-                    notificationsEnabled = value;
-                  });
-                },
-              ),
               SettingsTile.switchTile(
                 title: 'Change password',
                 leading: Icon(Icons.lock),
@@ -81,16 +64,24 @@ class _SettingsState extends State<Settings> {
             title: 'Account',
             tiles: [
               SettingsTile(title: 'Email', leading: Icon(Icons.email)),
-              SettingsTile(title: 'Sign out', leading: Icon(Icons.exit_to_app), onTap: () async {
-                SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-                sharedPreferences.clear();
-                Navigator.of(context).pushReplacementNamed('/LogIn');
-              }),
+              SettingsTile(
+                  title: 'Sign out',
+                  leading: Icon(Icons.exit_to_app),
+                  onTap: () async {
+                    SharedPreferences sharedPreferences =
+                        await SharedPreferences.getInstance();
+                    sharedPreferences.clear();
+                    Navigator.of(context).pushReplacementNamed('/LogIn');
+                  }),
             ],
           ),
           SettingsSection(
             title: 'Misc',
             tiles: [
+              SettingsTile(
+                  title: 'support@crazystar', leading: Icon(Icons.support_agent_sharp), onTap: () {
+                    _launchURL("mailto:support@crazystar");
+                  }),
               SettingsTile(
                   title: 'Terms of Service', leading: Icon(Icons.description))
             ],
@@ -109,7 +100,8 @@ class _SettingsState extends State<Settings> {
                 ),
                 Text(
                   'Crazy Star',
-                  style: TextStyle(color: Color(0xFF777777), fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Color(0xFF777777), fontWeight: FontWeight.bold),
                 ),
                 Text(
                   'Version: 1.1.0',
@@ -119,21 +111,33 @@ class _SettingsState extends State<Settings> {
             ),
           ),
           CustomSection(
-            child: Row(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 40, bottom: 8),
+                  padding: const EdgeInsets.only(top: 5, bottom: 8),
                 ),
-                Text("Powered by: ",style: TextStyle(color: Color(0xFF777777))),
+                Text("Powered by: ",
+                    style: TextStyle(color: Color(0xFF777777))),
                 InkWell(
-                  onTap: () {
-                    const url = "https://www.tommasobellini.it";
-                    _launchURL(url);
-                  },
-                  child: Text("Tommaso Bellini ",style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold))),
-                Text("& "),
-                Text("Angelo Calabria",style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold)),
+                    onTap: () {
+                      const url = "https://www.tommasobellini.it";
+                      _launchURL(url);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Tommaso Bellini ",
+                            style: TextStyle(
+                                color: Colors.deepPurple,
+                                fontWeight: FontWeight.bold)),
+                        Text("& "),
+                        Text("Angelo Calabria",
+                            style: TextStyle(
+                                color: Colors.deepPurple,
+                                fontWeight: FontWeight.bold)),
+                      ],
+                    ))
               ],
             ),
           )

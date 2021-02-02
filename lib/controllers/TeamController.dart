@@ -21,7 +21,11 @@ class TeamController extends ControllerMVC {
           isLoading = true;
     });
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var response = await authenticatedGet(team_api + "?user=" + sharedPreferences.getString('user_id'));
+    String user_id = sharedPreferences.getString('user_id');
+    if (user_id == null || user_id == '') {
+        Navigator.of(context).pushReplacementNamed('/LogIn');
+    } else {
+       var response = await authenticatedGet(team_api + "?user=" + user_id);
     print(response.statusCode);
     if (response.statusCode == 200) {
         jsonData = json.decode(response.body);
@@ -38,7 +42,9 @@ class TeamController extends ControllerMVC {
      setState(() {
           isLoading = false;
          });
-  }
+  
+    }
+   }
 
   getTeamMembers(teamId) async {
     print(user_api + '?team=' + teamId);
@@ -76,6 +82,15 @@ class TeamController extends ControllerMVC {
     String teamId = sharedPreferences.getString("team_chose");
     String userId = data['user']['id'].toString();
     var response = await apiPutAuthenticated('${user_api}${userId}/remove_star/?team=${teamId}', {});
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      print(jsonData);
+    }
+  }
+
+  createTeam(data) async {
+    var response = await apiPutAuthenticated('${team_api}', data);
     print(response.statusCode);
     if (response.statusCode == 200) {
       var jsonData = json.decode(response.body);

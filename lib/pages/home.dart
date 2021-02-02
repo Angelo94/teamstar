@@ -95,7 +95,7 @@ class _HomeState extends StateMVC<Home> {
           children: <Widget>[
             for (var i in _con.teamMembers)
               new SizedBox(
-                  height: 130.0,
+                  height: 120.0,
                   width: double.infinity,
                   child: new Card(
                     child: InkWell(
@@ -116,7 +116,7 @@ class _HomeState extends StateMVC<Home> {
                                 Row(mainAxisAlignment: MainAxisAlignment.center,children: [
                                   Text("${i['user']['first_name']} ${i['user']['last_name']}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                                 ],),
-                                SizedBox(height: 50,),
+                                SizedBox(height: 60,),
                                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                                   Text("+", style: TextStyle(fontSize:50, fontWeight: FontWeight.w500, color: Colors.grey)),
                                    AnimatedIconButton(
@@ -195,7 +195,7 @@ class _HomeState extends StateMVC<Home> {
                         Expanded(
                           flex: 7,
                           child: Padding(
-                            padding: EdgeInsets.all(20.0),
+                            padding: EdgeInsets.only(left: 20.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,8 +207,9 @@ class _HomeState extends StateMVC<Home> {
                                           style: TextStyle(
                                               fontSize: 20.0,
                                               fontWeight: FontWeight.bold)),
+                                      i['is_team_admin'] ? Icon(Icons.admin_panel_settings) : Text("")
                                     ]),
-                                SizedBox(height: 2),
+                                SizedBox(height: 20),
                                 Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: List.generate(i['star_counter'],(index){
@@ -232,7 +233,7 @@ class _HomeState extends StateMVC<Home> {
                                 Container(
                                   alignment: Alignment.center,
                                   width: 120,
-                                  height: 120,
+                                  height: 110,
                                   child: Stack(
                                     children: <Widget>[
                                       Container(
@@ -261,18 +262,25 @@ class _HomeState extends StateMVC<Home> {
             context: context,
             dialogType: DialogType.QUESTION,
             animType: AnimType.SCALE,
-            btnOkOnPress: () {},
             body: Center(
-              child: Column(children: [
-                Row(children: [
+              child: Column(mainAxisAlignment: MainAxisAlignment.center,children: [
+                SizedBox(height: 80,),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text("Team name: ${teamName}", style: TextStyle(fontSize: 20))
                 ],),
-                Row(children: [
+                SizedBox(height: 20,),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text("Team admin: Pippo", style: TextStyle(fontSize: 20))
+                ],),
+                SizedBox(height: 20,),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text("Target name: ${targetName}", style: TextStyle(fontSize: 20))
                 ],),
-                Row(children: [
+                SizedBox(height: 20,),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text("Target max: ${targetMax}", style: TextStyle(fontSize: 20))
-                ],)
+                ],),
+                SizedBox(height: 80,),
               ],)
             )
             )..show();

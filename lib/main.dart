@@ -51,9 +51,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   getTeamInfo() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String team_id = sharedPreferences.getString("team_chose");
-    team_name = sharedPreferences.getString("team_name");
+    team_name = sharedPreferences.getString("team_name") == null ? team_name : sharedPreferences.getString("team_name");
     print("team chose");
     print(team_id);
+    if (team_id == null) {
+      Navigator.of(context).pushReplacementNamed('/ChooseTeamPage');
+    }
   }
 
   @override
