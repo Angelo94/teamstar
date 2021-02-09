@@ -62,41 +62,43 @@ class _ChooseTeamState extends StateMVC<ChooseTeam> {
           ],
         ),
         body: new Container(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            new CustomScrollView(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            slivers: <Widget>[
-              new SliverPadding(
-                padding: const EdgeInsets.symmetric(vertical: 24.0),
-                sliver: new SliverList(
-                  delegate: new SliverChildBuilderDelegate(
-                    (context, index) => new InkWell(
-                      child: new PlanetRow(_con.teams[index]),
-                      onTap: () async {
-                        print('tapping');
-                        SharedPreferences sharedPreferences =
-                            await SharedPreferences.getInstance();
-                        sharedPreferences.setString(
-                            "team_chose", _con.teams[index].id.toString());
-                        sharedPreferences.setString(
-                            "team_name", _con.teams[index].name);
-                        sharedPreferences.setString(
-                            "target_name", _con.teams[index].target_name);
-                        sharedPreferences.setString("target_max",
-                            _con.teams[index].target_max.toString());
-                        Navigator.of(context).pushReplacementNamed('/MainPage');
-                      },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              new CustomScrollView(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                slivers: <Widget>[
+                  new SliverPadding(
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    sliver: new SliverList(
+                      delegate: new SliverChildBuilderDelegate(
+                        (context, index) => new InkWell(
+                          child: new PlanetRow(_con.teams[index]),
+                          onTap: () async {
+                            print('tapping');
+                            SharedPreferences sharedPreferences =
+                                await SharedPreferences.getInstance();
+                            sharedPreferences.setString(
+                                "team_chose", _con.teams[index].id.toString());
+                            sharedPreferences.setString(
+                                "team_name", _con.teams[index].name);
+                            sharedPreferences.setString(
+                                "target_name", _con.teams[index].target_name);
+                            sharedPreferences.setString("target_max",
+                                _con.teams[index].target_max.toString());
+                            Navigator.of(context)
+                                .pushReplacementNamed('/MainPage');
+                          },
+                        ),
+                        childCount: _con.teams.length,
+                      ),
                     ),
-                    childCount: _con.teams.length,
                   ),
-                ),
+                ],
               ),
             ],
           ),
-          ],
-        ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -189,33 +191,48 @@ class FullScreenDialogState extends StateMVC<FullScreenDialog> {
         body: new Padding(
           child: new ListView(
             children: <Widget>[
-                SizedBox(height: 25,),
+              SizedBox(
+                height: 25,
+              ),
               Text("Team name"),
               new TextField(
-                decoration: InputDecoration(hintText: "ex. SpiceGirls",),
+                decoration: InputDecoration(
+                  hintText: "ex. SpiceGirls",
+                ),
                 controller: _skillOneController,
                 scrollPadding: EdgeInsets.all(20.0),
                 keyboardType: TextInputType.multiline,
-                autofocus: true,),
-                SizedBox(height: 50,),
+                autofocus: true,
+              ),
+              SizedBox(
+                height: 50,
+              ),
               Text("Team target name"),
-               new TextField(
-                decoration: InputDecoration(hintText: "ex. Coffee",),
+              new TextField(
+                decoration: InputDecoration(
+                  hintText: "ex. Coffee",
+                ),
                 controller: _skillTwoController,
                 scrollPadding: EdgeInsets.all(20.0),
                 keyboardType: TextInputType.multiline,
-                autofocus: true,),
-                SizedBox(height: 50,),
-
+                autofocus: true,
+              ),
+              SizedBox(
+                height: 50,
+              ),
               Text("Team target max limit"),
-               new TextField(
-                decoration: InputDecoration(hintText: "ex. 5",),
+              new TextField(
+                decoration: InputDecoration(
+                  hintText: "ex. 5",
+                ),
                 controller: _skillThreeController,
                 scrollPadding: EdgeInsets.all(20.0),
                 keyboardType: TextInputType.multiline,
-                autofocus: true,),
-                SizedBox(height: 50,),
-
+                autofocus: true,
+              ),
+              SizedBox(
+                height: 50,
+              ),
               new Row(
                 children: <Widget>[
                   new Expanded(
@@ -227,7 +244,6 @@ class FullScreenDialogState extends StateMVC<FullScreenDialog> {
                       print(widget._skillThree);
                       print(widget._skillTwo);
                       print(widget._skillOne);
-                      _con.createTeam();
                     },
                     child: new Text("Save"),
                   ))
