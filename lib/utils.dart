@@ -71,10 +71,24 @@ apiPut(url, body) async{
   return response;
 }
 
-apiPutAuthenticated(url, body) async{
+apiPutAuthenticated(url, body, {contentType='application/x-www-form-urlencoded'}) async{
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   var _token = sharedPreferences.getString("token");
   var response = await http.put(
+    url,
+    body: body,
+    headers: {
+      "Authorization": "Token $_token",
+      "Content-Type": contentType,
+    }
+  );
+  return response;
+}
+
+apiPostAuthenticated(url, body) async{
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  var _token = sharedPreferences.getString("token");
+  var response = await http.post(
     url,
     body: body,
     headers: {

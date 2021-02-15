@@ -104,7 +104,7 @@ class _SettingsState extends State<Settings> {
                       color: Color(0xFF777777), fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  'Version: 1.1.0',
+                  'Version: 1.0.0',
                   style: TextStyle(color: Color(0xFF777777)),
                 ),
               ],

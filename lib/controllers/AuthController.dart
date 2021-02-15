@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:team_superstar/utils.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:team_superstar/models/User.dart';
@@ -12,6 +13,9 @@ class AuthController extends ControllerMVC {
   bool isLoading = false;
   LocalStorage storage_user = new LocalStorage("user");
   List teamMembers = [];
+  List availableUsers = [];
+
+
   logIn(String username, password) async {
     Map data = {'username': username, 'password': password};
 
@@ -29,9 +33,11 @@ class AuthController extends ControllerMVC {
         print(jsonData['token']);
         sharedPreferences.setString("token", jsonData['token']);
       });
-      var response2 = await authenticatedGet(user_api + jsonData['id'].toString() + '/');
+      var response2 =
+          await authenticatedGet(user_api + jsonData['id'].toString() + '/');
       if (response2.statusCode == 200) {
         jsonData2 = json.decode(response2.body);
+        OneSignal.shared.setExternalUserId(jsonData2['id'].toString());
         setState(() {
           isLoading = false;
           sharedPreferences.setString("user_id", jsonData2['id'].toString());
@@ -81,7 +87,7 @@ class AuthController extends ControllerMVC {
 //Se registrato correttamente salva il token (key) in local storage
     print(response.statusCode);
     print(response.body);
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
       setState(() {
         isLoading = false;
@@ -151,6 +157,80 @@ class AuthController extends ControllerMVC {
 //       });
 // }
   }
+  getUsers() async {
+    var response = await authenticatedGet('${user_api}');
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      print(jsonData);
+      List<User> users_list = [];
+        for (var team in jsonData) {
+          users_list.add(User.fromJSON(team));
+        }
+        setState(() {
+          availableUsers = users_list;
+        });
+    } else {
+      var error = json.decode(response.body);
+      showDialog(
+          context: context,
+          builder: (_) => new AlertDialog(
+                title: new Text("Users Error"),
+                content: new Text(error),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ));
+    }
+  }
 
-
+  addInTeam(member) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String teamId = sharedPreferences.getString("team_chose");
+    List<String> members = [];
+    members.add(member);
+    Map<String, dynamic> data = {
+      "members": members
+    };
+    var response = await apiPutAuthenticated('${team_api}${teamId}/add_member/', jsonEncode(data), contentType: 'application/json');
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      print(jsonData);
+      showDialog(
+          context: context,
+          builder: (_) => new AlertDialog(
+                title: new Text("User added"),
+                content: new Text("User added successfully"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ));
+    } else {
+      var error = json.decode(response.body);
+      showDialog(
+          context: context,
+          builder: (_) => new AlertDialog(
+                title: new Text("Team Error"),
+                content: new Text(error),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ));
+    }
+  }
 }

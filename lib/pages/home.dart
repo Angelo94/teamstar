@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
@@ -26,6 +28,7 @@ class _HomeState extends StateMVC<Home> {
   String targetName = "";
   String teamName = "";
   String targetMax = "";
+  bool teamAdmin = true;
 
   final dataKey = new GlobalKey();
   _HomeState() : super(TeamController()) {
@@ -40,12 +43,12 @@ class _HomeState extends StateMVC<Home> {
     String target_max = sharedPreferences.getString("target_max");
     if (teamId != null) {
       _con.getTeamMembers(teamId);
-      setState(()=>{
-        teamName = team_name,
-        targetName = target_name,
-        targetMax = target_max,
-      });
-       setState(() {
+      setState(() => {
+            teamName = team_name,
+            targetName = target_name,
+            targetMax = target_max,
+          });
+      setState(() {
         _con.isLoading = true;
       });
     }
@@ -58,6 +61,18 @@ class _HomeState extends StateMVC<Home> {
       });
     } else
       username = "user";
+  }
+
+  areYouTeamAdmin() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.getString("user_id");
+    for (var member in _con.teamMembers) {
+      if (member['user']['id'].toString() == userId) {
+        setState(() {
+          teamAdmin = member['is_team_admin'];
+        });
+      }
+    }
   }
 
   checkToken() async {
@@ -83,208 +98,315 @@ class _HomeState extends StateMVC<Home> {
     print('IS LOADING');
     print(_con.isLoading);
     getTeamInfo();
+    Future.delayed(const Duration(milliseconds: 1000), () async {
+      await areYouTeamAdmin();
+    });
   }
 
   Widget build(BuildContext context) {
     //List<String> teamMembers = _con.teamMembers.length > 0 ? _con.teamMembers : [];
 
     return new Scaffold(
-      primary: true,
-      body: _con.isLoading ? Center(child: buildLoader()) : new SingleChildScrollView(
-        child: new Column(
-          children: <Widget>[
-            for (var i in _con.teamMembers)
-              new SizedBox(
-                  height: 120.0,
-                  width: double.infinity,
-                  child: new Card(
-                    child: InkWell(
-                      onTap: () {
-                          print('tapping');
-                          AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.INFO,
-                              animType: AnimType.BOTTOMSLIDE,
-                              body: Center(
-                                child:  Column(children: [
-                                Row(mainAxisAlignment: MainAxisAlignment.center,children: [
-                                  Text("Add or remove star", style: TextStyle(fontSize: 20),),
-                                ],),
-                                Row(mainAxisAlignment: MainAxisAlignment.center,children: [
-                                  Text("to", style: TextStyle(fontSize: 20),),
-                                ],),
-                                Row(mainAxisAlignment: MainAxisAlignment.center,children: [
-                                  Text("${i['user']['first_name']} ${i['user']['last_name']}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                                ],),
-                                SizedBox(height: 60,),
-                                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                                  Text("+", style: TextStyle(fontSize:50, fontWeight: FontWeight.w500, color: Colors.grey)),
-                                   AnimatedIconButton(
-                                        size: 70,
-                                        onPressed: () {
-                                          print("star assigned");
-                                          if (addButtonSelected) {
-                                            setState(() {
-                                              addButtonSelected = false;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              addButtonSelected = true;
-                                            });
-                                             _con.addStar(i);
-                                            getTeamInfo();
-                                          }
-                                         
-                                        },
-                                        duration: Duration(milliseconds: 200),
-                                        endIcon: Icon(
-                                            Icons.star,
-                                                color: Colors.orangeAccent,
-                                            ),
-                                        startIcon: Icon(
-                                            Icons.star,
-                                            color: Colors.grey,
-                                        ),
-                                    ),
-                                    SizedBox(
-                                      width: 40,
-                                    ),
-                                     AnimatedIconButton(
-                                        size: 70,
-                                        onPressed: () {
-                                          print("button with color pressed");
-                                           if (removeButtonSelected) {
-                                            setState(() {
-                                              removeButtonSelected = false;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              removeButtonSelected = true;
-                                            });
-                                             _con.removeStar(i);
-                                            getTeamInfo();
-                                          }
-                                        },
-                                        duration: Duration(milliseconds: 200),
-                                        endIcon: Icon(
-                                            Icons.star_outline,
-                                                color: Colors.red,
-                                            ),
-                                        startIcon: Icon(
-                                            Icons.star_outline,
-                                            color: Colors.grey,
-                                        ),
-                                    ),
-                                  Text("-", style: TextStyle(fontSize:50, fontWeight: FontWeight.w500, color: Colors.grey)),
-                                ],),
-                                SizedBox(height: 50,),
-                              ],)),
-                              title: 'Info Utente',
-                              desc: 'Dialog description here.............',
-                              // btnCancelOnPress: () {},
-                              // btnOkOnPress: () {},
-                              // btnCancelIcon: Icons.delete,
-                              // btnOkIcon: Icons.save,
-                              // btnCancelText: "Annulla",
-                              // btnOkText: "Salva",
-                            )..show();
-                      },
-                      child: Row(
-                      children: <Widget>[
-                        // Column 1
-                        Expanded(
-                          flex: 7,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 20.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
+        primary: true,
+        body: _con.isLoading
+            ? Center(child: buildLoader())
+            : new SingleChildScrollView(
+                child: new Column(
+                  children: <Widget>[
+                    for (var i in _con.teamMembers)
+                      new SizedBox(
+                          height: 120.0,
+                          width: double.infinity,
+                          child: new Card(
+                              child: InkWell(
+                            onTap: () {
+                              print('tapping');
+                              if (teamAdmin)
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.INFO,
+                                  animType: AnimType.BOTTOMSLIDE,
+                                  body: Center(
+                                      child: Column(
                                     children: [
-                                      Text(i['user']['first_name'] + ' ' + i['user']['last_name'],
-                                          style: TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold)),
-                                      i['is_team_admin'] ? Icon(Icons.admin_panel_settings) : Text("")
-                                    ]),
-                                SizedBox(height: 20),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: List.generate(i['star_counter'],(index){
-                                          return  Icon(Icons.star_border,
-                                            color: Colors.amber, size: 30.0);
-                                      })),
-                                SizedBox(height: 2),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // Column 2
-                        // The Place where I am Stuck//
-                        Expanded(
-                          flex: 3,
-                          child: Container(
-                            color: Colors.white,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                Container(
-                                  alignment: Alignment.center,
-                                  width: 120,
-                                  height: 110,
-                                  child: Stack(
-                                    children: <Widget>[
-                                      Container(
-                                          width: 80,
-                                          height: 80,
-                                          child: CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                                'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png'),
-                                            backgroundColor: Colors.transparent,
-                                          )),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Add or remove star",
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "to",
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                              "${i['user']['first_name']} ${i['user']['last_name']}",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold)),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 60,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text("+",
+                                              style: TextStyle(
+                                                  fontSize: 50,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.grey)),
+                                          AnimatedIconButton(
+                                            size: 70,
+                                            onPressed: () {
+                                              print("star assigned");
+                                              // if (addButtonSelected) {
+                                              //   setState(() {
+                                              //     addButtonSelected = false;
+                                              //   });
+                                              // } else {
+                                              //   setState(() {
+                                              //     addButtonSelected = true;
+                                              //   });
+                                              //   _con.addStar(i);
+                                              //   getTeamInfo();
+                                              // }
+                                              _con.addStar(i);
+                                              getTeamInfo();
+                                              Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 500), () {
+                                                Navigator.of(context).pop();
+                                              });
+                                            },
+                                            duration:
+                                                Duration(milliseconds: 200),
+                                            endIcon: Icon(
+                                              Icons.star,
+                                              color: Colors.orangeAccent,
+                                            ),
+                                            startIcon: Icon(
+                                              Icons.star,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 40,
+                                          ),
+                                          AnimatedIconButton(
+                                            size: 70,
+                                            onPressed: () {
+                                              print(
+                                                  "button with color pressed");
+                                              // if (removeButtonSelected) {
+                                              //   setState(() {
+                                              //     removeButtonSelected = false;
+                                              //   });
+                                              // } else {
+                                              //   setState(() {
+                                              //     removeButtonSelected = true;
+                                              //   });
+                                              //   _con.removeStar(i);
+                                              //   getTeamInfo();
+                                              // }
+                                              _con.removeStar(i);
+                                              getTeamInfo();
+                                              Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 500), () {
+                                                Navigator.of(context).pop();
+                                              });
+                                            },
+                                            duration:
+                                                Duration(milliseconds: 200),
+                                            endIcon: Icon(
+                                              Icons.star_outline,
+                                              color: Colors.red,
+                                            ),
+                                            startIcon: Icon(
+                                              Icons.star_outline,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          Text("-",
+                                              style: TextStyle(
+                                                  fontSize: 50,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.grey)),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 50,
+                                      ),
                                     ],
+                                  )),
+                                  title: 'Info Utente',
+                                  desc: 'Dialog description here.............',
+                                  // btnCancelOnPress: () {},
+                                  // btnOkOnPress: () {},
+                                  // btnCancelIcon: Icons.delete,
+                                  // btnOkIcon: Icons.save,
+                                  // btnCancelText: "Annulla",
+                                  // btnOkText: "Salva",
+                                )..show();
+                            },
+                            child: Row(
+                              children: <Widget>[
+                                // Column 1
+                                Expanded(
+                                  flex: 7,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 20.0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                  i['user']['first_name'] != ''
+                                                      ? i['user']
+                                                              ['first_name'] +
+                                                          ' ' +
+                                                          i['user']['last_name']
+                                                      : i['user']['username'],
+                                                  style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                              i['is_team_admin']
+                                                  ? Icon(Icons
+                                                      .admin_panel_settings)
+                                                  : Text("")
+                                            ]),
+                                        SizedBox(height: 20),
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: List.generate(
+                                                i['star_counter'], (index) {
+                                              return Icon(Icons.star_border,
+                                                  color: Colors.amber,
+                                                  size: 30.0);
+                                            })),
+                                        SizedBox(height: 2),
+                                      ],
+                                    ),
                                   ),
                                 ),
+                                // Column 2
+                                // The Place where I am Stuck//
+                                Expanded(
+                                  flex: 3,
+                                  child: Container(
+                                    color: Colors.white,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        Container(
+                                          alignment: Alignment.center,
+                                          width: 120,
+                                          height: 110,
+                                          child: Stack(
+                                            children: <Widget>[
+                                              Container(
+                                                  width: 80,
+                                                  height: 80,
+                                                  child: CircleAvatar(
+                                                    backgroundImage: NetworkImage(
+                                                        'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png'),
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                  )),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
-                          ),
-                        )
-                      ],
-                    ),
-              )))
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(onPressed: (){
-        AwesomeDialog(
-            context: context,
-            dialogType: DialogType.QUESTION,
-            animType: AnimType.SCALE,
-            body: Center(
-              child: Column(mainAxisAlignment: MainAxisAlignment.center,children: [
-                SizedBox(height: 80,),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text("Team name: ${teamName}", style: TextStyle(fontSize: 20))
-                ],),
-                SizedBox(height: 20,),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text("Team admin: Pippo", style: TextStyle(fontSize: 20))
-                ],),
-                SizedBox(height: 20,),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text("Target name: ${targetName}", style: TextStyle(fontSize: 20))
-                ],),
-                SizedBox(height: 20,),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text("Target max: ${targetMax}", style: TextStyle(fontSize: 20))
-                ],),
-                SizedBox(height: 80,),
-              ],)
-            )
-            )..show();
-      },  child: Icon(Icons.info_sharp, size: 50))
-    );
+                          )))
+                  ],
+                ),
+              ),
+        floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              AwesomeDialog(
+                  context: context,
+                  dialogType: DialogType.QUESTION,
+                  animType: AnimType.SCALE,
+                  body: Center(
+                      child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 80,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Team name: ${teamName}",
+                              style: TextStyle(fontSize: 20))
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Team admin: Pippo",
+                              style: TextStyle(fontSize: 20))
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Target name: ${targetName}",
+                              style: TextStyle(fontSize: 20))
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Target max: ${targetMax}",
+                              style: TextStyle(fontSize: 20))
+                        ],
+                      ),
+                      SizedBox(
+                        height: 80,
+                      ),
+                    ],
+                  )))
+                ..show();
+            },
+            child: Icon(Icons.info_sharp, size: 50)));
   }
 }

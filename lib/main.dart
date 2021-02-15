@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:team_superstar/global_variables.dart';
 import 'package:team_superstar/pages/home.dart';
 import 'package:team_superstar/pages/search.dart';
 import 'package:team_superstar/pages/settings.dart';
@@ -10,6 +12,19 @@ import 'tab_item.dart';
 
 Future main() async {
   await DotEnv().load('.env');
+  //Remove this method to stop OneSignal Debugging
+  OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+
+  OneSignal.shared.init(onesignal_key, iOSSettings: {
+    OSiOSSettings.autoPrompt: false,
+    OSiOSSettings.inAppLaunchUrl: false
+  });
+  OneSignal.shared
+      .setInFocusDisplayType(OSNotificationDisplayType.notification);
+
+// The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+  await OneSignal.shared
+      .promptUserForPushNotificationPermission(fallbackToSettings: true);
   runApp(MyApp());
 }
 
@@ -41,17 +56,19 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   String team_name = "Crazy Star";
   SharedPreferences sharedPreferences;
   List<String> _list = [];
-  
 
   callback(newAbc) {
     setState(() {
       page_index = newAbc;
     });
   }
+
   getTeamInfo() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String team_id = sharedPreferences.getString("team_chose");
-    team_name = sharedPreferences.getString("team_name") == null ? team_name : sharedPreferences.getString("team_name");
+    team_name = sharedPreferences.getString("team_name") == null
+        ? team_name
+        : sharedPreferences.getString("team_name");
     print("team chose");
     print(team_id);
     if (team_id == null) {
@@ -63,10 +80,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     getTeamInfo();
-    
 
     return Scaffold(
         backgroundColor: Colors.grey.shade200,
@@ -81,7 +98,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 color: Colors.white,
               ),
               onPressed: () async {
-               Navigator.of(context).pushReplacementNamed('/ChooseTeamPage');
+                Navigator.of(context).pushReplacementNamed('/ChooseTeamPage');
               },
             ),
             IconButton(

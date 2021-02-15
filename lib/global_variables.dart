@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 String base_url =
     'http://34.251.245.121:8000' + '/api/'; // NOTE: or add your address ip
 // ignore: non_constant_identifier_names
-String onesignal_key = 'XXXXXXXX-XXXXXXXXXXXX-XXXXXXXXX';
+String onesignal_key = 'dd43cf2f-c90a-4e93-bd23-16e2b0687f61';
 
 // URLS
 String login_api = base_url + 'auth/token/';
