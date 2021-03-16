@@ -56,7 +56,7 @@ class _LoginPageState extends StateMVC<LoginPage> {
             textSection(),
             buttonSection(),
             buttonRegister(),
-            socialSection(),
+            // socialSection(),
             SizedBox(height: 50),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
